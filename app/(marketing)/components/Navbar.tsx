@@ -98,7 +98,7 @@ export default function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Join for Free
+                  Join Free
                 </a>
               </Button>
             </div>
