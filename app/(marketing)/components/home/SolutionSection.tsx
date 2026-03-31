@@ -3,70 +3,7 @@ import Link from "next/link";
 
 const APP_ORIGIN = "https://my.joinclubpack.com";
 
-const COLUMN_1_IMAGES = [
-  "/solution/happy-club.png",
-  "/solution/faq.png",
-  "/solution/photo-club.png",
-  "/solution/happy-contact.png",
-  "/solution/SF-pickle-club.png",
-  "/solution/happy-events.png",
-  "/solution/sky-club.png",
-  "/solution/upcoming-events.png",
-];
-
-const COLUMN_2_IMAGES = [
-  "/solution/happy-events.png",
-  "/solution/photo-club.png",
-  "/solution/faq.png",
-  "/solution/happy-club.png",
-  "/solution/upcoming-events.png",
-  "/solution/SF-pickle-club.png",
-  "/solution/happy-contact.png",
-  "/solution/sky-club.png",
-];
-
-function VerticalMarquee({
-  images,
-  direction,
-  durationSeconds,
-  offset = 0,
-}: {
-  images: string[];
-  direction: "up" | "down";
-  durationSeconds: number;
-  offset?: number;
-}) {
-  const safeOffset = images.length
-    ? ((offset % images.length) + images.length) % images.length
-    : 0;
-  const orderedImages =
-    safeOffset === 0
-      ? images
-      : [...images.slice(safeOffset), ...images.slice(0, safeOffset)];
-
-  return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div
-        className={`flex flex-col gap-4 ${
-          direction === "up" ? "cp-vertical-marquee-up" : "cp-vertical-marquee-down"
-        }`}
-        style={{ animationDuration: `${durationSeconds}s` }}
-      >
-        {[...orderedImages, ...orderedImages].map((src, idx) => (
-          <div key={`${src}-${idx}`} className="relative aspect-[16/9] w-full shrink-0 px-2">
-            <Image
-              src={src}
-              alt=""
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover border border-gray-100 shadow-sm rounded-lg"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const HERO_IMAGE = "/beautiful-club-ui.png";
 
 export default function SolutionSection() {
   return (
@@ -86,22 +23,18 @@ export default function SolutionSection() {
         <div className="w-full space-y-6 lg:space-y-8">
           {/* Row 1 */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            {/* Wide Card - Scrolling Image Carousel */}
-            <div className="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-sm border border-gray-100 min-h-[450px] max-h-[570px] bg-white px-3">
-              <div className="grid grid-cols-2 gap-2 h-full">
-                <VerticalMarquee
-                  images={COLUMN_1_IMAGES}
-                  direction="up"
-                  durationSeconds={75}
-                />
-                <VerticalMarquee
-                  images={COLUMN_2_IMAGES}
-                  direction="down"
-                  durationSeconds={83}
-                  offset={3}
+            {/* Wide Card - Club website hero */}
+            <div className="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-sm border border-gray-100 min-h-[450px] max-h-[570px] bg-white">
+              <div className="relative w-full h-full min-h-[450px]">
+                <Image
+                  src={HERO_IMAGE}
+                  alt="Club website hero - example club site with hero section"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover object-center"
+                  priority
                 />
               </div>
-              
             </div>
 
             {/* Standard Card - Website Description */}
