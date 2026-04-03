@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { APP_ORIGIN } from "@/lib/constants";
 
 const CTASection = () => {
   return (
@@ -32,7 +33,7 @@ const CTASection = () => {
                 className="h-auto bg-white text-[#0054f9] hover:bg-gray-50 px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-200 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-[0.98] w-full sm:w-auto"
               >
                 <a
-                  href="https://my.joinclubpack.com/signup"
+                  href={`${APP_ORIGIN}/signup`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

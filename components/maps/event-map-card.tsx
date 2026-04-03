@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { MapPin, Navigation } from "lucide-react"
 
@@ -39,16 +40,16 @@ export function EventMapCard({
       {/* Static map image (only when token is set) — flush to top */}
       {staticMapUrl ? (
         <div className="relative aspect-[5/3] w-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={staticMapUrl}
             alt={
               locationName
                 ? `Map of ${locationName}`
                 : `Map at ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
             }
-            className="h-full w-full object-cover"
-            loading="lazy"
+            fill
+            unoptimized
+            className="object-cover"
           />
         </div>
       ) : (

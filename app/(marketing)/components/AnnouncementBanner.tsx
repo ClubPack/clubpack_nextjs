@@ -1,4 +1,4 @@
-const APP_ORIGIN = "https://my.joinclubpack.com";
+import { APP_ORIGIN } from "@/lib/constants";
 
 export default function AnnouncementBanner() {
   return (

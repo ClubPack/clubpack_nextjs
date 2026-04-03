@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { format, isBefore, startOfDay } from "date-fns"
 import { CalendarPlus, MapPin, Trash2, Users } from "lucide-react"
@@ -358,13 +359,14 @@ export function EventsClient({ events }: { events: EventRow[] }) {
                     setViewOpen(true)
                   }}
                 >
-                  <div className="aspect-video w-full shrink-0 overflow-hidden bg-muted">
+                  <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-muted">
                     {e.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={e.image_url}
                         alt=""
-                        className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform group-hover:scale-[1.02]"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-muted-foreground">
@@ -429,13 +431,14 @@ export function EventsClient({ events }: { events: EventRow[] }) {
 
           <div className="flex-1 min-h-0 overflow-y-auto px-6">
             <div className="grid gap-4">
-              <div className="border-muted-foreground/25 bg-muted/15 aspect-video overflow-hidden rounded-lg border">
+              <div className="relative border-muted-foreground/25 bg-muted/15 aspect-video overflow-hidden rounded-lg border">
                 {viewing?.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={viewing.image_url}
                     alt=""
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 720px) 100vw, 720px"
+                    className="object-cover"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
@@ -691,6 +694,7 @@ export function EventsClient({ events }: { events: EventRow[] }) {
                   }
                 >
                   {editCoverPreview ? (
+                    // next/image can't optimize blob: URLs from file inputs
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={editCoverPreview}

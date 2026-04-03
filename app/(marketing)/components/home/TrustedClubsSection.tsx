@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 const TrustedClubsSection = () => {
 
@@ -29,12 +30,12 @@ const TrustedClubsSection = () => {
                 key={`first-${index}`}
                 className="flex items-center justify-center min-w-[200px]"
               >
-                <img
+                <Image
                   src={club.logo}
                   alt={`${club.name} logo`}
+                  width={200}
+                  height={48}
                   className="h-12 w-auto object-contain filter brightness-0 opacity-60"
-                  loading="lazy"
-                  decoding="async"
                 />
               </div>
             ))}
@@ -45,12 +46,12 @@ const TrustedClubsSection = () => {
                 key={`second-${index}`}
                 className="flex items-center justify-center min-w-[200px]"
               >
-                <img
+                <Image
                   src={club.logo}
                   alt={`${club.name} logo`}
+                  width={200}
+                  height={48}
                   className="h-12 w-auto object-contain filter brightness-0 opacity-60"
-                  loading="lazy"
-                  decoding="async"
                 />
               </div>
             ))}

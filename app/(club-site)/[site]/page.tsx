@@ -26,8 +26,8 @@ function clubDescriptionFromRow(club: ClubRow) {
 
 function clubLocationFromRow(club: ClubRow) {
   const loc = typeof club.location === "string" ? club.location : null
-  const city = typeof club.city === "string" ? (club.city as string) : null
-  const state = typeof club.state === "string" ? (club.state as string) : null
+  const city = typeof club.city === "string" ? club.city : null
+  const state = typeof club.state === "string" ? club.state : null
   return (
     (loc || [city, state].filter(Boolean).join(", ") || "Local").trim()
   )
@@ -37,7 +37,6 @@ function clubHeroImageFromRow(club: ClubRow) {
   const heroImage =
     (typeof club.hero_image_url === "string" && club.hero_image_url) ||
     (typeof club.hero_image === "string" && club.hero_image) ||
-    (typeof club.heroImage === "string" && (club.heroImage as string)) ||
     ""
 
   // Fall back to an existing public asset so the hero never breaks.

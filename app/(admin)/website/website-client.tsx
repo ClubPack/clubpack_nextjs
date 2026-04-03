@@ -187,6 +187,7 @@ export function WebsiteClient({
                   <div className="flex w-full items-center gap-3">
                     <div className="bg-background aspect-square h-16 w-16 overflow-hidden rounded-md border">
                       {logoPreview ? (
+                        // next/image can't optimize blob: URLs from file inputs
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={logoPreview}
@@ -297,6 +298,7 @@ export function WebsiteClient({
                   onClick={() => document.getElementById("heroUpload")?.click()}
                 >
                   {heroPreview ? (
+                    // next/image can't optimize blob: URLs from file inputs
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={heroPreview}

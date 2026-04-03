@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const APP_ORIGIN = "https://my.joinclubpack.com";
 
@@ -30,12 +31,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-24 mb-16">
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center mb-8 group">
-              <img
+              <Image
                 src="/clubpack-logos/clubpack-logo-large.svg"
                 alt="ClubPack"
+                width={160}
+                height={32}
                 className="h-8 w-auto"
-                loading="lazy"
-                decoding="async"
               />
             </Link>
 

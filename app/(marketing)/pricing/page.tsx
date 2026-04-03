@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+
+export const revalidate = 3600
 import {
   Accordion,
   AccordionContent,

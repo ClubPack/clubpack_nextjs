@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-const APP_ORIGIN = "https://my.joinclubpack.com";
+import { APP_ORIGIN } from "@/lib/constants";
 
 const MESSAGES = [
   {
@@ -382,7 +381,7 @@ export default function ProblemSection() {
 
           <div className="mt-6 lg:mt-8 relative rounded-2xl overflow-hidden shadow-lg h-[600px]">
             <Image
-              src="/club-photos/happy-group.jpeg"
+              src="/club-photos/happy-group.webp"
               alt="Happy club members"
               fill
               sizes="(max-width: 1440px) 100vw, 1440px"

@@ -3,6 +3,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { getAllPosts } from "@/lib/blog"
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: "Blog",
   description:

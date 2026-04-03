@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { getAdminContext } from "@/lib/admin/get-admin-context"
 import { getRsvpsForEvent } from "@/lib/data/club-site"
+import type { SimpleActionResult } from "@/lib/types/action-result"
 
 function fileExt(name: string) {
   const ext = name.split(".").pop()
@@ -16,7 +17,7 @@ async function uploadEventCoverImage(params: {
   clubId: string
   eventId: string
   file: File
-}) {
+}): Promise<string> {
   const path = `${params.clubId}/events/${params.eventId}/cover.${fileExt(params.file.name)}`
   const uploadRes = await params.supabase.storage
     .from("club-assets")
@@ -34,40 +35,120 @@ async function uploadEventCoverImage(params: {
   return signed.data.signedUrl
 }
 
-export async function createEvent(formData: FormData) {
-  const { profile, userId } = await getAdminContext()
-  if (!profile.club_id) return
+export async function createEvent(formData: FormData): Promise<SimpleActionResult> {
+  try {
+    const { profile, userId } = await getAdminContext()
+    if (!profile.club_id) return { ok: false, error: "No club linked." }
 
-  const title = String(formData.get("title") ?? "").trim()
-  const event_date = String(formData.get("event_date") ?? "")
-  const event_time = String(formData.get("event_time") ?? "")
-  const end_time = String(formData.get("end_time") ?? "").trim() || null
-  const location_name = String(formData.get("location_name") ?? "")
-  const description = String(formData.get("description") ?? "")
-  const maxAttendeesRaw = String(formData.get("max_attendees") ?? "")
-  const cover = formData.get("cover_image")
+    const title = String(formData.get("title") ?? "").trim()
+    const event_date = String(formData.get("event_date") ?? "")
+    const event_time = String(formData.get("event_time") ?? "")
+    const end_time = String(formData.get("end_time") ?? "").trim() || null
+    const location_name = String(formData.get("location_name") ?? "")
+    const description = String(formData.get("description") ?? "")
+    const maxAttendeesRaw = String(formData.get("max_attendees") ?? "")
+    const cover = formData.get("cover_image")
 
-  const latRaw = String(formData.get("latitude") ?? "")
-  const lngRaw = String(formData.get("longitude") ?? "")
-  const latitude = latRaw && !Number.isNaN(Number(latRaw)) ? Number(latRaw) : null
-  const longitude = lngRaw && !Number.isNaN(Number(lngRaw)) ? Number(lngRaw) : null
+    const latRaw = String(formData.get("latitude") ?? "")
+    const lngRaw = String(formData.get("longitude") ?? "")
+    const latitude = latRaw && !Number.isNaN(Number(latRaw)) ? Number(latRaw) : null
+    const longitude = lngRaw && !Number.isNaN(Number(lngRaw)) ? Number(lngRaw) : null
 
-  const max_attendees =
-    maxAttendeesRaw && !Number.isNaN(Number(maxAttendeesRaw))
-      ? Number(maxAttendeesRaw)
-      : null
+    const max_attendees =
+      maxAttendeesRaw && !Number.isNaN(Number(maxAttendeesRaw))
+        ? Number(maxAttendeesRaw)
+        : null
 
-  const rsvpOpenTimeRaw = String(formData.get("rsvp_open_time") ?? "").trim()
-  const rsvp_open_time =
-    rsvpOpenTimeRaw && !Number.isNaN(new Date(rsvpOpenTimeRaw).getTime())
-      ? rsvpOpenTimeRaw
-      : null
+    const rsvpOpenTimeRaw = String(formData.get("rsvp_open_time") ?? "").trim()
+    const rsvp_open_time =
+      rsvpOpenTimeRaw && !Number.isNaN(new Date(rsvpOpenTimeRaw).getTime())
+        ? rsvpOpenTimeRaw
+        : null
 
-  const supabase = await createClient()
-  const insertRes = await supabase
-    .from("events")
-    .insert({
-      club_id: profile.club_id,
+    const supabase = await createClient()
+    const insertRes = await supabase
+      .from("events")
+      .insert({
+        club_id: profile.club_id,
+        title,
+        description,
+        event_date,
+        event_time,
+        end_time,
+        location_name,
+        latitude,
+        longitude,
+        max_attendees,
+        rsvp_open_time,
+        created_by: userId,
+        status: "upcoming",
+      })
+      .select("id")
+      .single()
+
+    if (insertRes.error) return { ok: false, error: insertRes.error.message }
+
+    const eventId = insertRes.data?.id as string | undefined
+    if (eventId && cover instanceof File && cover.size > 0) {
+      const image_url = await uploadEventCoverImage({
+        supabase,
+        clubId: profile.club_id,
+        eventId,
+        file: cover,
+      })
+      const upd = await supabase
+        .from("events")
+        .update({ image_url })
+        .eq("id", eventId)
+        .eq("club_id", profile.club_id)
+      if (upd.error) return { ok: false, error: upd.error.message }
+    }
+
+    revalidatePath("/events")
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Failed to create event." }
+  }
+}
+
+export async function updateEvent(formData: FormData): Promise<SimpleActionResult> {
+  try {
+    const { profile } = await getAdminContext()
+    if (!profile.club_id) return { ok: false, error: "No club linked." }
+
+    const id = String(formData.get("id") ?? "")
+    const title = String(formData.get("title") ?? "").trim()
+    const event_date = String(formData.get("event_date") ?? "")
+    const event_time = String(formData.get("event_time") ?? "")
+    const end_time = String(formData.get("end_time") ?? "").trim() || null
+    const location_name = String(formData.get("location_name") ?? "")
+    const description = String(formData.get("description") ?? "")
+    const statusRaw = String(formData.get("status") ?? "upcoming").toLowerCase()
+    const allowedStatuses = ["upcoming", "completed", "cancelled"] as const
+    const status = allowedStatuses.includes(statusRaw as (typeof allowedStatuses)[number])
+      ? statusRaw
+      : "upcoming"
+    const maxAttendeesRaw = String(formData.get("max_attendees") ?? "")
+    const cover = formData.get("cover_image")
+
+    const latRaw = String(formData.get("latitude") ?? "")
+    const lngRaw = String(formData.get("longitude") ?? "")
+    const latitude = latRaw && !Number.isNaN(Number(latRaw)) ? Number(latRaw) : null
+    const longitude = lngRaw && !Number.isNaN(Number(lngRaw)) ? Number(lngRaw) : null
+
+    const max_attendees =
+      maxAttendeesRaw && !Number.isNaN(Number(maxAttendeesRaw))
+        ? Number(maxAttendeesRaw)
+        : null
+
+    const rsvpOpenTimeRaw = String(formData.get("rsvp_open_time") ?? "").trim()
+    const rsvp_open_time =
+      rsvpOpenTimeRaw && !Number.isNaN(new Date(rsvpOpenTimeRaw).getTime())
+        ? rsvpOpenTimeRaw
+        : null
+
+    const supabase = await createClient()
+    const updatePayload: Record<string, unknown> = {
       title,
       description,
       event_date,
@@ -77,117 +158,52 @@ export async function createEvent(formData: FormData) {
       latitude,
       longitude,
       max_attendees,
+      status,
       rsvp_open_time,
-      created_by: userId,
-      status: "upcoming",
-    })
-    .select("id")
-    .single()
+    }
 
-  if (insertRes.error) throw new Error(insertRes.error.message)
+    if (id && cover instanceof File && cover.size > 0) {
+      const image_url = await uploadEventCoverImage({
+        supabase,
+        clubId: profile.club_id,
+        eventId: id,
+        file: cover,
+      })
+      updatePayload.image_url = image_url
+    }
 
-  const eventId = insertRes.data?.id as string | undefined
-  if (eventId && cover instanceof File && cover.size > 0) {
-    const image_url = await uploadEventCoverImage({
-      supabase,
-      clubId: profile.club_id,
-      eventId,
-      file: cover,
-    })
-    const upd = await supabase
+    const { error } = await supabase
       .from("events")
-      .update({ image_url })
+      .update(updatePayload)
+      .eq("id", id)
+      .eq("club_id", profile.club_id)
+
+    if (error) return { ok: false, error: error.message }
+    revalidatePath("/events")
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Failed to update event." }
+  }
+}
+
+export async function deleteEvent(eventId: string): Promise<SimpleActionResult> {
+  try {
+    const { profile } = await getAdminContext()
+    if (!profile.club_id) return { ok: false, error: "No club linked." }
+
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from("events")
+      .delete()
       .eq("id", eventId)
       .eq("club_id", profile.club_id)
-    if (upd.error) throw new Error(upd.error.message)
+
+    if (error) return { ok: false, error: error.message }
+    revalidatePath("/events")
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Failed to delete event." }
   }
-
-  revalidatePath("/events")
-}
-
-export async function updateEvent(formData: FormData) {
-  const { profile } = await getAdminContext()
-  if (!profile.club_id) return
-
-  const id = String(formData.get("id") ?? "")
-  const title = String(formData.get("title") ?? "").trim()
-  const event_date = String(formData.get("event_date") ?? "")
-  const event_time = String(formData.get("event_time") ?? "")
-  const end_time = String(formData.get("end_time") ?? "").trim() || null
-  const location_name = String(formData.get("location_name") ?? "")
-  const description = String(formData.get("description") ?? "")
-  const statusRaw = String(formData.get("status") ?? "upcoming").toLowerCase()
-  const allowedStatuses = ["upcoming", "completed", "cancelled"] as const
-  const status = allowedStatuses.includes(statusRaw as (typeof allowedStatuses)[number])
-    ? statusRaw
-    : "upcoming"
-  const maxAttendeesRaw = String(formData.get("max_attendees") ?? "")
-  const cover = formData.get("cover_image")
-
-  const latRaw = String(formData.get("latitude") ?? "")
-  const lngRaw = String(formData.get("longitude") ?? "")
-  const latitude = latRaw && !Number.isNaN(Number(latRaw)) ? Number(latRaw) : null
-  const longitude = lngRaw && !Number.isNaN(Number(lngRaw)) ? Number(lngRaw) : null
-
-  const max_attendees =
-    maxAttendeesRaw && !Number.isNaN(Number(maxAttendeesRaw))
-      ? Number(maxAttendeesRaw)
-      : null
-
-  const rsvpOpenTimeRaw = String(formData.get("rsvp_open_time") ?? "").trim()
-  const rsvp_open_time =
-    rsvpOpenTimeRaw && !Number.isNaN(new Date(rsvpOpenTimeRaw).getTime())
-      ? rsvpOpenTimeRaw
-      : null
-
-  const supabase = await createClient()
-  const updatePayload: Record<string, unknown> = {
-    title,
-    description,
-    event_date,
-    event_time,
-    end_time,
-    location_name,
-    latitude,
-    longitude,
-    max_attendees,
-    status,
-    rsvp_open_time,
-  }
-
-  if (id && cover instanceof File && cover.size > 0) {
-    const image_url = await uploadEventCoverImage({
-      supabase,
-      clubId: profile.club_id,
-      eventId: id,
-      file: cover,
-    })
-    updatePayload.image_url = image_url
-  }
-
-  const { error } = await supabase
-    .from("events")
-    .update(updatePayload)
-    .eq("id", id)
-    .eq("club_id", profile.club_id)
-
-  if (error) throw new Error(error.message)
-  revalidatePath("/events")
-}
-
-export async function deleteEvent(eventId: string) {
-  const { profile } = await getAdminContext()
-  if (!profile.club_id) return
-
-  const supabase = await createClient()
-  const { error } = await supabase
-    .from("events")
-    .delete()
-    .eq("id", eventId)
-    .eq("club_id", profile.club_id)
-
-  if (error) throw new Error(error.message)
-  revalidatePath("/events")
 }
 
 export type EventRsvpForView = {
@@ -219,4 +235,3 @@ export async function deleteRsvp(rsvpId: string): Promise<DeleteRsvpResult> {
   revalidatePath("/events")
   return { ok: true }
 }
-

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Download, ExternalLink, FileText, FileUp, ImageIcon, Save, Trash2 } from "lucide-react"
 
@@ -393,11 +394,11 @@ export function WaiversClient({
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="relative aspect-square max-h-48 w-full overflow-hidden rounded-md border bg-muted">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={selectedSubmission.photo_url}
                         alt="Submission photo"
-                        className="object-contain size-full"
+                        fill
+                        className="object-contain"
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">

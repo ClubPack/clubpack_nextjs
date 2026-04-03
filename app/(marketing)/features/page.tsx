@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+export const revalidate = 3600
+
 export const metadata = {
   title: "Features",
 };
@@ -84,7 +86,7 @@ export default function FeaturesPage() {
         "Mobile-optimized and SEO-friendly",
         "Event creation and RSVP tracking",
       ],
-      image: "/landing_images/website.png",
+      image: "/landing_images/website.jpg",
     },
     {
       icon: "users" as const,
@@ -96,7 +98,7 @@ export default function FeaturesPage() {
         "Member roles and permissions",
         "Exportable contact info",
       ],
-      image: "/landing_images/member-directory.png",
+      image: "/landing_images/member-directory.jpg",
     },
     {
       icon: "calendar" as const,
@@ -108,7 +110,7 @@ export default function FeaturesPage() {
         "Browse or customize prebuilt event templates",
         "Add event photos, location, and post-run notes",
       ],
-      image: "/landing_images/events.png",
+      image: "/landing_images/events.jpg",
     },
     {
       icon: "chart" as const,
@@ -120,7 +122,7 @@ export default function FeaturesPage() {
         "Events: See and edit past/upcoming events + attendance data",
         "Event Ideas Library: Built-in inspiration for new event formats",
       ],
-      image: "/landing_images/admin-dashboard.png",
+      image: "/landing_images/admin-dashboard.jpg",
     },
     {
       icon: "toolkit" as const,
@@ -132,7 +134,7 @@ export default function FeaturesPage() {
         "Training and onboarding guide for new admins",
         "Shared notes, contacts, and passwords",
       ],
-      image: "/landing_images/leadership-handoff.png",
+      image: "/landing_images/leadership-handoff.jpg",
     },
   ];
 
