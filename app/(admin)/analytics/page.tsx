@@ -1,39 +1,13 @@
+import { Suspense } from "react"
 import { getAdminContext } from "@/lib/admin/get-admin-context"
 import { createClient } from "@/lib/supabase/server"
+import { isoDateOnly, bucketByDay } from "@/lib/admin/analytics-utils"
 
 import { AnalyticsClient } from "./analytics-client"
 
 export const dynamic = "force-dynamic"
 
-type DailyCount = { date: string; count: number }
-
-function isoDateOnly(d: Date) {
-  return d.toISOString().slice(0, 10)
-}
-
-function startOfDay(d: Date) {
-  const x = new Date(d)
-  x.setHours(0, 0, 0, 0)
-  return x
-}
-
-function addDays(d: Date, days: number) {
-  const x = new Date(d)
-  x.setDate(x.getDate() + days)
-  return x
-}
-
-function buildDayBins(days: number) {
-  const today = startOfDay(new Date())
-  const start = addDays(today, -(days - 1))
-  const bins: DailyCount[] = []
-  for (let i = 0; i < days; i++) {
-    bins.push({ date: isoDateOnly(addDays(start, i)), count: 0 })
-  }
-  return { start, end: addDays(today, 1), bins }
-}
-
-export default async function AnalyticsPage() {
+async function AnalyticsContent() {
   const { profile } = await getAdminContext()
 
   if (!profile.club_id) {
@@ -143,30 +117,21 @@ export default async function AnalyticsPage() {
   const websiteViewsLast7 = websiteViewsLast7Res.count ?? 0
   const websiteViewsLast30 = websiteViewsLast30Res.count ?? 0
 
-  // 30-day mini “charts” (daily bars)
-  const joinBins = buildDayBins(30)
-  ;((membersJoinedRows.data ?? []) as Array<{ joined_at: string | null }>).forEach((r) => {
-    if (!r.joined_at) return
-    const d = isoDateOnly(new Date(r.joined_at))
-    const idx = joinBins.bins.findIndex((b) => b.date === d)
-    if (idx >= 0) joinBins.bins[idx]!.count += 1
-  })
-
-  const rsvpBins = buildDayBins(30)
-  ;((rsvpsCreatedRows.data ?? []) as Array<{ created_at: string | null }>).forEach((r) => {
-    if (!r.created_at) return
-    const d = isoDateOnly(new Date(r.created_at))
-    const idx = rsvpBins.bins.findIndex((b) => b.date === d)
-    if (idx >= 0) rsvpBins.bins[idx]!.count += 1
-  })
-
-  const websiteViewBins = buildDayBins(30)
-  ;((websiteViewsRows.data ?? []) as Array<{ viewed_at: string | null }>).forEach((r) => {
-    if (!r.viewed_at) return
-    const d = isoDateOnly(new Date(r.viewed_at))
-    const idx = websiteViewBins.bins.findIndex((b) => b.date === d)
-    if (idx >= 0) websiteViewBins.bins[idx]!.count += 1
-  })
+  const membersDaily = bucketByDay(
+    (membersJoinedRows.data ?? []) as Array<{ joined_at: string | null }>,
+    "joined_at",
+    30,
+  )
+  const rsvpsDaily = bucketByDay(
+    (rsvpsCreatedRows.data ?? []) as Array<{ created_at: string | null }>,
+    "created_at",
+    30,
+  )
+  const websiteViewsDaily = bucketByDay(
+    (websiteViewsRows.data ?? []) as Array<{ viewed_at: string | null }>,
+    "viewed_at",
+    30,
+  )
 
   return (
     <AnalyticsClient
@@ -182,10 +147,36 @@ export default async function AnalyticsPage() {
         websiteViewsLast30,
       }}
       charts={{
-        membersDaily: joinBins.bins,
-        rsvpsDaily: rsvpBins.bins,
-        websiteViewsDaily: websiteViewBins.bins,
+        membersDaily,
+        rsvpsDaily,
+        websiteViewsDaily,
       }}
     />
+  )
+}
+
+function AnalyticsSkeleton() {
+  return (
+    <div className="flex flex-col gap-6 animate-pulse">
+      <div className="h-8 w-40 rounded-md bg-muted" />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-28 rounded-lg bg-muted" />
+        ))}
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-48 rounded-lg bg-muted" />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default function AnalyticsPage() {
+  return (
+    <Suspense fallback={<AnalyticsSkeleton />}>
+      <AnalyticsContent />
+    </Suspense>
   )
 }

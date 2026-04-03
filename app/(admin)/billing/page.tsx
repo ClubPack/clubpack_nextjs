@@ -1,11 +1,10 @@
-"use client"
-
 import { Check } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+
+import { PlanButton } from "./plan-button"
 
 const PLANS = [
   {
@@ -60,7 +59,6 @@ const PLANS = [
   },
 ] as const
 
-// Mock: replace with real subscription state from your backend
 const CURRENT_PLAN_ID = "free"
 
 export default function BillingPage() {
@@ -93,15 +91,15 @@ export default function BillingPage() {
                       Popular
                     </Badge>
                   )}
-                  {isCurrent && (
-                    <Badge>Current</Badge>
-                  )}
+                  {isCurrent && <Badge>Current</Badge>}
                 </div>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col gap-4">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold">{plan.priceLabel}</span>
-                  <span className="text-muted-foreground text-sm">/{plan.period}</span>
+                  <span className="text-muted-foreground text-sm">
+                    /{plan.period}
+                  </span>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {plan.features.map((f) => (
@@ -112,14 +110,12 @@ export default function BillingPage() {
                   ))}
                 </ul>
                 <div className="mt-auto pt-4">
-                  <Button
-                    variant={isCurrent ? "secondary" : plan.popular ? "default" : "outline"}
-                    className="w-full"
-                    disabled={isCurrent}
-                    onClick={() => !isCurrent && console.log("Change plan (mock):", plan.id)}
-                  >
-                    {isCurrent ? plan.cta : plan.cta}
-                  </Button>
+                  <PlanButton
+                    planId={plan.id}
+                    isCurrent={isCurrent}
+                    isPopular={plan.popular}
+                    label={plan.cta}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -131,25 +127,10 @@ export default function BillingPage() {
         <CardHeader>
           <CardTitle className="text-base">Payment method</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {CURRENT_PLAN_ID === "free" ? (
-            <p className="text-sm text-muted-foreground">
-              Add a payment method when you upgrade to a paid plan.
-            </p>
-          ) : (
-            <>
-              <div className="text-sm">
-                Visa •••• 4242
-                <div className="text-xs text-muted-foreground">Expires 12/27</div>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => console.log("Update payment method (mock)")}
-              >
-                Update payment method
-              </Button>
-            </>
-          )}
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Add a payment method when you upgrade to a paid plan.
+          </p>
         </CardContent>
       </Card>
     </div>

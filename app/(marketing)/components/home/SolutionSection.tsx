@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { APP_ORIGIN } from "@/lib/constants";
 
-const APP_ORIGIN = "https://my.joinclubpack.com";
-
-const HERO_IMAGE = "/beautiful-club-ui.png";
+const HERO_IMAGE = "/beautiful-club-ui.jpg";
 
 export default function SolutionSection() {
   return (

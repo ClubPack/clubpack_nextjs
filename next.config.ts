@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: appDir,
   // Next.js 16 uses Turbopack by default; empty config acknowledges we're ok with that
   // (custom webpack above is for workspace resolution and may not apply to Turbopack).
-  turbopack: {},
+  turbopack: {
+    root: appDir,
+  },
   experimental: {
     // Cache visited admin (and other dynamic) pages on the client so navigating
     // between them doesn't refetch until stale (5 min).
@@ -26,6 +28,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "api.mapbox.com",
       },
     ],
   },

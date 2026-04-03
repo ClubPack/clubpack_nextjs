@@ -214,6 +214,7 @@ export function CreateEventDialog({
                 onClick={() => document.getElementById("create-cover")?.click()}
               >
                 {coverPreview ? (
+                  // next/image can't optimize blob: URLs from file inputs
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={coverPreview}

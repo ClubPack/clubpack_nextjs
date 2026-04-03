@@ -76,12 +76,12 @@ export const markdownComponents: MarkdownComponents = {
   ),
 
   img: (props) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      {...props}
+    <Image
+      src={typeof props.src === "string" ? props.src : ""}
       alt={typeof props.alt === "string" ? props.alt : ""}
+      width={800}
+      height={400}
       className="rounded-xl my-6 w-full border border-gray-200"
-      loading="lazy"
     />
   ),
 

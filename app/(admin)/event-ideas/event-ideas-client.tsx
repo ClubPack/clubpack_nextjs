@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -87,13 +88,14 @@ export function EventIdeasClient({ ideas }: { ideas: EventIdeaRow[] }) {
               setDialogOpen(true)
             }}
           >
-            <div className="aspect-video w-full shrink-0 overflow-hidden bg-muted">
+            <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-muted">
               {idea.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={idea.image_url}
                   alt={idea.name ?? "Event idea"}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform group-hover:scale-[1.02]"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
