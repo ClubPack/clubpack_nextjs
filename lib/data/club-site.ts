@@ -2,20 +2,6 @@ import { cache } from "react"
 
 import { createClient } from "@/lib/supabase/server"
 
-const CLUB_COLUMNS = [
-  "id", "subdomain", "name", "description", "location", "meeting_location",
-  "city", "state",
-  "tagline", "hero_image", "hero_image_url", "hero_headline", "hero_subtext",
-  "instagram", "primary_color", "logo_url", "logo", "contact_email", "email",
-  "about_blurb",
-].join(", ")
-
-const EVENT_COLUMNS = [
-  "id", "club_id", "title", "description", "event_date", "event_time",
-  "end_time", "location_name", "latitude", "longitude", "status",
-  "max_attendees", "rsvp_open_time", "image_url", "event_image",
-].join(", ")
-
 export type ClubRow = {
   id: string
   subdomain: string | null
@@ -37,6 +23,7 @@ export type ClubRow = {
   contact_email?: string | null
   email?: string | null
   about_blurb?: string | null
+  [key: string]: unknown
 }
 
 export type EventRow = {
@@ -54,9 +41,9 @@ export type EventRow = {
   max_attendees?: number | null
   rsvp_open_time?: string | null
   image_url?: string | null
-  /** Legacy/alternate column name used by some club-site templates */
   event_image?: string | null
   rsvpCount?: number
+  [key: string]: unknown
 }
 
 export type FaqRow = {
@@ -66,10 +53,12 @@ export type FaqRow = {
   answer: string | null
   order_index?: number | null
   created_at?: string | null
+  [key: string]: unknown
 }
 
 /**
  * Fetch the club row for a given subdomain.
+ * Uses select("*") so the query works regardless of which columns exist.
  * Cached per-request via React's `cache()`.
  */
 export const getClubBySubdomain = cache(async (subdomain: string): Promise<ClubRow | null> => {
@@ -77,15 +66,15 @@ export const getClubBySubdomain = cache(async (subdomain: string): Promise<ClubR
   const s = (subdomain ?? "").trim()
   if (!s) return null
 
-  const exact = await supabase.from("clubs").select(CLUB_COLUMNS).eq("subdomain", s).maybeSingle()
+  const exact = await supabase.from("clubs").select("*").eq("subdomain", s).maybeSingle()
   if (exact.error) throw new Error(exact.error.message)
-  if (exact.data) return exact.data as unknown as ClubRow
+  if (exact.data) return exact.data as ClubRow
 
   const normalized = s.toLowerCase().replace(/-/g, "")
   if (normalized && normalized !== s) {
-    const alt = await supabase.from("clubs").select(CLUB_COLUMNS).eq("subdomain", normalized).maybeSingle()
+    const alt = await supabase.from("clubs").select("*").eq("subdomain", normalized).maybeSingle()
     if (alt.error) throw new Error(alt.error.message)
-    if (alt.data) return alt.data as unknown as ClubRow
+    if (alt.data) return alt.data as ClubRow
   }
 
   return null
@@ -101,7 +90,7 @@ export const getUpcomingEventsByClubId = cache(async (clubId: string, limit = 6)
   const [eventsRes, rsvpsRes] = await Promise.all([
     supabase
       .from("events")
-      .select(EVENT_COLUMNS)
+      .select("*")
       .eq("club_id", id)
       .gte("event_date", todayIso)
       .order("event_date", { ascending: true })
@@ -110,7 +99,7 @@ export const getUpcomingEventsByClubId = cache(async (clubId: string, limit = 6)
   ])
 
   if (eventsRes.error) throw new Error(eventsRes.error.message)
-  const events = (eventsRes.data as unknown as EventRow[]) ?? []
+  const events = (eventsRes.data as EventRow[]) ?? []
 
   const rsvpCounts = new Map<string, number>()
   if (!rsvpsRes.error && rsvpsRes.data) {
@@ -130,13 +119,13 @@ export const getEventById = cache(async (clubId: string, eventId: string): Promi
 
   const { data, error } = await supabase
     .from("events")
-    .select(EVENT_COLUMNS)
+    .select("*")
     .eq("club_id", cId)
     .eq("id", eId)
     .maybeSingle()
 
   if (error) throw new Error(error.message)
-  return (data as unknown as EventRow | null) ?? null
+  return (data as EventRow | null) ?? null
 })
 
 export type EventRsvpRow = {
@@ -205,10 +194,10 @@ export const getFaqsByClubId = cache(async (clubId: string): Promise<FaqRow[]> =
 
   const { data, error } = await supabase
     .from("faqs")
-    .select("id, club_id, question, answer, order_index, created_at")
+    .select("*")
     .eq("club_id", id)
     .order("order_index", { ascending: true })
 
   if (error) throw new Error(error.message)
-  return (data as unknown as FaqRow[]) ?? []
+  return (data as FaqRow[]) ?? []
 })
