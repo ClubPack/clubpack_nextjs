@@ -68,6 +68,11 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
+  const [ready, setReady] = React.useState(false)
+
+  React.useEffect(() => {
+    requestAnimationFrame(() => setReady(true))
+  }, [])
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -131,6 +136,7 @@ function SidebarProvider({
       <TooltipProvider delayDuration={0}>
         <div
           data-slot="sidebar-wrapper"
+          data-ready={ready ? "" : undefined}
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH,
@@ -139,7 +145,7 @@ function SidebarProvider({
             } as React.CSSProperties
           }
           className={cn(
-            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full [&:not([data-ready])_*]:!transition-none",
             className
           )}
           {...props}
