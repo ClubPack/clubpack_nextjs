@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 
 const CLUB_COLUMNS = [
   "id", "subdomain", "name", "description", "location", "meeting_location",
+  "city", "state",
   "tagline", "hero_image", "hero_image_url", "hero_headline", "hero_subtext",
   "instagram", "primary_color", "logo_url", "logo", "contact_email", "email",
   "about_blurb",
@@ -12,7 +13,7 @@ const CLUB_COLUMNS = [
 const EVENT_COLUMNS = [
   "id", "club_id", "title", "description", "event_date", "event_time",
   "end_time", "location_name", "latitude", "longitude", "status",
-  "max_attendees", "rsvp_open_time", "image_url",
+  "max_attendees", "rsvp_open_time", "image_url", "event_image",
 ].join(", ")
 
 export type ClubRow = {
@@ -22,6 +23,8 @@ export type ClubRow = {
   description?: string | null
   location?: string | null
   meeting_location?: string | null
+  city?: string | null
+  state?: string | null
   tagline?: string | null
   hero_image?: string | null
   hero_image_url?: string | null
@@ -51,6 +54,8 @@ export type EventRow = {
   max_attendees?: number | null
   rsvp_open_time?: string | null
   image_url?: string | null
+  /** Legacy/alternate column name used by some club-site templates */
+  event_image?: string | null
   rsvpCount?: number
 }
 
@@ -74,13 +79,13 @@ export const getClubBySubdomain = cache(async (subdomain: string): Promise<ClubR
 
   const exact = await supabase.from("clubs").select(CLUB_COLUMNS).eq("subdomain", s).maybeSingle()
   if (exact.error) throw new Error(exact.error.message)
-  if (exact.data) return exact.data as ClubRow
+  if (exact.data) return exact.data as unknown as ClubRow
 
   const normalized = s.toLowerCase().replace(/-/g, "")
   if (normalized && normalized !== s) {
     const alt = await supabase.from("clubs").select(CLUB_COLUMNS).eq("subdomain", normalized).maybeSingle()
     if (alt.error) throw new Error(alt.error.message)
-    if (alt.data) return alt.data as ClubRow
+    if (alt.data) return alt.data as unknown as ClubRow
   }
 
   return null
@@ -105,7 +110,7 @@ export const getUpcomingEventsByClubId = cache(async (clubId: string, limit = 6)
   ])
 
   if (eventsRes.error) throw new Error(eventsRes.error.message)
-  const events = (eventsRes.data as EventRow[]) ?? []
+  const events = (eventsRes.data as unknown as EventRow[]) ?? []
 
   const rsvpCounts = new Map<string, number>()
   if (!rsvpsRes.error && rsvpsRes.data) {
@@ -131,7 +136,7 @@ export const getEventById = cache(async (clubId: string, eventId: string): Promi
     .maybeSingle()
 
   if (error) throw new Error(error.message)
-  return (data as EventRow | null) ?? null
+  return (data as unknown as EventRow | null) ?? null
 })
 
 export type EventRsvpRow = {
@@ -205,5 +210,5 @@ export const getFaqsByClubId = cache(async (clubId: string): Promise<FaqRow[]> =
     .order("order_index", { ascending: true })
 
   if (error) throw new Error(error.message)
-  return (data as FaqRow[]) ?? []
+  return (data as unknown as FaqRow[]) ?? []
 })
