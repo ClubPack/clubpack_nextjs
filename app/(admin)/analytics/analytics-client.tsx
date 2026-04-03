@@ -27,23 +27,25 @@ function MiniBars({ data }: { data: DailyCount[] }) {
   const max = Math.max(1, ...data.map((d) => d.count))
   return (
     <TooltipProvider>
-      <div className="flex items-end gap-1.5">
-        {data.map((d) => (
-          <Tooltip key={d.date}>
-            <TooltipTrigger asChild>
-              <div className="bg-muted relative h-48 min-w-[12px] flex-1 max-w-8 cursor-pointer overflow-hidden rounded-md">
-                <div
-                  className="bg-primary absolute bottom-0 left-0 right-0 rounded-md"
-                  style={{ height: `${Math.round((d.count / max) * 100)}%` }}
-                />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <span className="font-medium">{d.count}</span>
-              <span className="text-background/80"> · {formatChartDate(d.date)}</span>
-            </TooltipContent>
-          </Tooltip>
-        ))}
+      <div className="w-full overflow-x-auto pb-1">
+        <div className="flex min-w-[540px] items-end gap-1.5">
+          {data.map((d) => (
+            <Tooltip key={d.date}>
+              <TooltipTrigger asChild>
+                <div className="bg-muted relative h-48 w-3.5 shrink-0 cursor-pointer overflow-hidden rounded-md">
+                  <div
+                    className="bg-primary absolute bottom-0 left-0 right-0 rounded-md"
+                    style={{ height: `${Math.round((d.count / max) * 100)}%` }}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <span className="font-medium">{d.count}</span>
+                <span className="text-background/80"> · {formatChartDate(d.date)}</span>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
       </div>
     </TooltipProvider>
   )
@@ -147,7 +149,7 @@ export function AnalyticsClient({
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 xl:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">New members (last 30 days)</CardTitle>
