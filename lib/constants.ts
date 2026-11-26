@@ -1,2 +1,5 @@
-export const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "localhost"
-export const APP_ORIGIN = `https://my.${ROOT_DOMAIN}`
+import { appUrl, ROOT_DOMAIN } from "@/lib/env"
+
+export { ROOT_DOMAIN }
+/** Dashboard origin, used by the marketing site's sign-up / log-in links. */
+export const APP_ORIGIN = appUrl("").replace(/\/$/, "")
