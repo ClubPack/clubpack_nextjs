@@ -3,9 +3,12 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { APP_ORIGIN } from "@/lib/constants";
+import { Reveal } from "../motion";
+import { CONTAINER, PillButton, SectionHeading } from "../primitives";
+import MobileCarousel from "./MobileCarousel";
 
 const MESSAGES = [
   {
@@ -81,7 +84,7 @@ function NotificationAnimation() {
   }, [prefersReducedMotion]);
 
   return (
-    <div className="flex flex-col gap-4 h-full justify-start pt-2 overflow-hidden relative px-8">
+    <div className="flex flex-col gap-4 h-full justify-start pt-2 overflow-hidden relative px-5 sm:px-8">
       <AnimatePresence initial={false} mode="popLayout">
         {visibleMessages.map((msg, idx) => (
           <motion.div
@@ -96,7 +99,7 @@ function NotificationAnimation() {
             exit={{ opacity: 0, y: 40, scale: 0.8, filter: "blur(12px)" }}
             transition={{ duration: 1.5, ease: [0.32, 0.72, 0, 1] }}
             layout
-            className="bg-white/90 backdrop-blur-sm p-3.5 rounded-[24px] shadow-sm border border-gray-100 flex items-center gap-4"
+            className="bg-white/90 backdrop-blur-sm p-3.5 rounded-[22px] shadow-[0_8px_24px_-12px_rgba(15,23,42,0.18)] ring-1 ring-gray-900/5 flex items-center gap-4"
           >
             <div className="flex-shrink-0 w-12 h-12 relative">
               <Image
@@ -128,293 +131,147 @@ function NotificationAnimation() {
   );
 }
 
+// Resting height, wobble keyframes, and duration for each analytics bar.
+const BARS = [
+  { h: 55, wobble: [55, 60, 53, 57, 55], d: 4, delay: 0 },
+  { h: 75, wobble: [75, 70, 78, 73, 75], d: 4.5, delay: 0.3 },
+  { h: 92, wobble: [92, 95, 90, 94, 92], d: 4.2, delay: 0.6 },
+  { h: 65, wobble: [65, 63, 68, 64, 65], d: 4.7, delay: 0.9 },
+  { h: 85, wobble: [85, 88, 83, 86, 85], d: 4.3, delay: 0.2 },
+  { h: 97, wobble: [97, 95, 99, 96, 97], d: 4.6, delay: 0.5 },
+  { h: 70, wobble: [70, 73, 68, 71, 70], d: 4.4, delay: 0.8 },
+];
+
+function ProblemCard({
+  index,
+  title,
+  description,
+  cta,
+  children,
+}: {
+  index: number;
+  title: string;
+  description: string;
+  cta: string;
+  children: ReactNode;
+}) {
+  return (
+    <Reveal delay={index * 0.1} className="flex w-full">
+      <Card className="group bg-white w-full rounded-3xl p-6 sm:p-8 border-0 ring-1 ring-gray-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-24px_rgba(15,23,42,0.22)] transition-all duration-500 overflow-hidden flex flex-col h-full gap-0">
+        <div className="flex-1">
+          <span className="font-mono text-xs text-gray-400">
+            {String(index + 1).padStart(2, "0")} / 03
+          </span>
+          <h3 className="mt-3 text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-gray-900 mb-2">
+            {title}
+          </h3>
+          <p className="text-gray-600 text-base mb-6 leading-relaxed">
+            {description}
+          </p>
+          <PillButton href={`${APP_ORIGIN}/signup`} variant="light" size="sm" className="mb-6">
+            {cta}
+          </PillButton>
+        </div>
+        {children}
+      </Card>
+    </Reveal>
+  );
+}
+
 export default function ProblemSection() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="pt-24 pb-12 bg-gray-50">
-      <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full">
-        <div className="text-left mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-900 mb-4">
-            Managing a Club is Difficult
-          </h2>
-          <p className="text-2xl text-gray-600">
-            Every club leader knows the struggle of managing multiple tools and
-            keeping everyone connected.
-          </p>
-        </div>
+    <section className="py-20 sm:py-32 bg-gray-50">
+      <div className={CONTAINER}>
+        <SectionHeading
+          eyebrow="The problem"
+          title={
+            <>
+              Managing a club is <span className="text-gray-400">difficult</span>
+            </>
+          }
+          description="Every club leader knows the struggle of managing multiple tools and keeping everyone connected."
+        />
 
-        <div className="w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            <Card className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full gap-0">
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Too many softwares
-                </h3>
-                <p className="text-gray-600 text-base mb-4 leading-relaxed">
-                  Running a club requires juggling multiple tools with scattered
-                  logins and details across different platforms.
-                </p>
-                <Button
-                  asChild
-                  variant="secondary"
-                  className="h-auto inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-900 font-normal py-3 px-10 rounded-xl mb-4 transition-colors duration-200"
-                >
-                  <a
-                    href={`${APP_ORIGIN}/signup`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+        <MobileCarousel label="Club management problems">
+          <ProblemCard
+            index={0}
+            title="Too many softwares"
+            description="Running a club requires juggling multiple tools with scattered logins and details across different platforms."
+            cta="Explore our solution"
+          >
+            <div className="space-y-3 -mx-6 sm:-mx-8 mb-2 sm:mb-6 mt-auto overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
+              {[appLogos.slice(0, 5), appLogos.slice(5, 9)].map((row, r) => (
+                <div key={r} className="overflow-hidden">
+                  <div
+                    className={`flex gap-3 px-6 sm:px-8 ${r === 0 ? "cp-marquee-right" : "cp-marquee-left"}`}
                   >
-                    Explore our solution
-                  </a>
-                </Button>
-              </div>
-
-              <div className="space-y-3 -mx-8 mb-8 mt-auto overflow-hidden">
-                <div className="overflow-hidden">
-                  <div className="flex gap-3 cp-marquee-right px-8">
-                    {[...appLogos.slice(0, 5), ...appLogos.slice(0, 5)].map(
-                      (app, idx) => (
-                        <div
-                          key={`${app.name}-${idx}`}
-                          className="relative w-20 h-20 shrink-0"
-                        >
-                          <Image
-                            src={app.src}
-                            alt={app.name}
-                            fill
-                            sizes="80px"
-                            className="object-contain rounded-2xl"
-                          />
-                        </div>
-                      ),
-                    )}
+                    {[...row, ...row].map((app, idx) => (
+                      <div
+                        key={`${app.name}-${idx}`}
+                        className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0"
+                      >
+                        <Image
+                          src={app.src}
+                          alt={idx < row.length ? app.name : ""}
+                          fill
+                          sizes="80px"
+                          className="object-contain rounded-2xl"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
+              ))}
+            </div>
+          </ProblemCard>
 
-                <div className="overflow-hidden">
-                  <div className="flex gap-3 cp-marquee-left px-8">
-                    {[...appLogos.slice(5, 9), ...appLogos.slice(5, 9)].map(
-                      (app, idx) => (
-                        <div
-                          key={`${app.name}-${idx}`}
-                          className="relative w-20 h-20 shrink-0"
-                        >
-                          <Image
-                            src={app.src}
-                            alt={app.name}
-                            fill
-                            sizes="80px"
-                            className="object-contain rounded-2xl"
-                          />
-                        </div>
-                      ),
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full gap-0">
-              <div className="flex-1">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                  No club analytics
-                </h3>
-                <p className="text-gray-600 text-base mb-4 leading-relaxed">
-                  Clubs struggle to understand performance, member engagement,
-                  and growth without clear data.
-                </p>
-                <Button
-                  asChild
-                  variant="secondary"
-                  className="h-auto inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-900 font-normal py-3 px-10 rounded-xl mb-4 transition-colors duration-200"
-                >
-                  <a
-                    href={`${APP_ORIGIN}/signup`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Get better analytics
-                  </a>
-                </Button>
-              </div>
-
-              <div className="-mx-8 mb-0 mt-auto pt-8 pb-8">
-                <div className="flex items-end justify-center gap-2 h-48">
+          <ProblemCard
+            index={1}
+            title="No club analytics"
+            description="Clubs struggle to understand performance, member engagement, and growth without clear data."
+            cta="Get better analytics"
+          >
+            <div className="-mx-6 sm:-mx-8 mt-auto pt-4 sm:pt-6 pb-2 sm:pb-6">
+              <div className="flex items-end justify-center gap-2 h-40 sm:h-48">
+                {BARS.map((bar, i) => (
                   <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
+                    key={i}
+                    className={`w-6 sm:w-8 rounded-t-md transition-colors duration-500 ${
+                      i === 5
+                        ? "bg-[#0054f9]"
+                        : "bg-gray-200 group-hover:bg-blue-100"
+                    }`}
                     animate={
                       prefersReducedMotion
                         ? undefined
-                        : { height: ["55%", "60%", "53%", "57%", "55%"] }
+                        : { height: bar.wobble.map((v) => `${v}%`) }
                     }
                     transition={{
-                      duration: 4,
+                      duration: bar.d,
                       repeat: Infinity,
                       ease: "easeInOut",
+                      delay: bar.delay,
                     }}
-                    style={{ height: "55%" }}
+                    style={{ height: `${bar.h}%` }}
                   />
-                  <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
-                    animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { height: ["75%", "70%", "78%", "73%", "75%"] }
-                    }
-                    transition={{
-                      duration: 4.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.3,
-                    }}
-                    style={{ height: "75%" }}
-                  />
-                  <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
-                    animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { height: ["92%", "95%", "90%", "94%", "92%"] }
-                    }
-                    transition={{
-                      duration: 4.2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.6,
-                    }}
-                    style={{ height: "92%" }}
-                  />
-                  <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
-                    animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { height: ["65%", "63%", "68%", "64%", "65%"] }
-                    }
-                    transition={{
-                      duration: 4.7,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.9,
-                    }}
-                    style={{ height: "65%" }}
-                  />
-                  <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
-                    animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { height: ["85%", "88%", "83%", "86%", "85%"] }
-                    }
-                    transition={{
-                      duration: 4.3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.2,
-                    }}
-                    style={{ height: "85%" }}
-                  />
-                  <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
-                    animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { height: ["97%", "95%", "99%", "96%", "97%"] }
-                    }
-                    transition={{
-                      duration: 4.6,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.5,
-                    }}
-                    style={{ height: "97%" }}
-                  />
-                  <motion.div
-                    className="w-8 bg-gray-200 rounded-t-sm"
-                    animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { height: ["70%", "73%", "68%", "71%", "70%"] }
-                    }
-                    transition={{
-                      duration: 4.4,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.8,
-                    }}
-                    style={{ height: "70%" }}
-                  />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full gap-0">
-              <div className="flex-1">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                  Communication chaos
-                </h3>
-                <p className="text-gray-600 text-base mb-4 leading-relaxed">
-                  Keeping members informed and aligned across multiple channels
-                  is messy and time-consuming.
-                </p>
-                <Button
-                  asChild
-                  variant="secondary"
-                  className="h-auto inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-900 font-normal py-3 px-10 rounded-xl mb-6 transition-colors duration-200"
-                >
-                  <a
-                    href={`${APP_ORIGIN}/signup`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Consolidate the chaos
-                  </a>
-                </Button>
-              </div>
-
-              <div className="relative -mx-8 -mb-8 h-[320px] mt-auto">
-                <NotificationAnimation />
-              </div>
-            </Card>
-          </div>
-
-          <div className="mt-6 lg:mt-8 relative rounded-2xl overflow-hidden shadow-lg h-[600px]">
-            <Image
-              src="/club-photos/happy-group.webp"
-              alt="Happy club members"
-              fill
-              sizes="(max-width: 1440px) 100vw, 1440px"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50" />
-
-            <div className="relative z-10 h-full flex flex-col justify-start p-8 lg:p-12">
-              <div>
-                <h3 className="text-2xl lg:text-3xl font-medium text-white mb-3">
-                  Focus on what really matters
-                </h3>
-                <p className="text-white/90 text-base lg:text-md mb-6 leading-relaxed max-w-2xl">
-                  Stop juggling multiple tools and start building your
-                  community. ClubPack brings everything together in one place so
-                  you can focus on what you do best—growing your club.
-                </p>
-                <Button
-                  asChild
-                  className="h-auto inline-flex items-center justify-center bg-[#0054f9] hover:bg-neutral-900 text-white text-base lg:text-md py-2 px-4 rounded-xl transition-colors duration-200"
-                >
-                  <a
-                    href={`${APP_ORIGIN}/signup`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Get started today
-                  </a>
-                </Button>
+                ))}
               </div>
             </div>
-          </div>
-        </div>
+          </ProblemCard>
+
+          <ProblemCard
+            index={2}
+            title="Communication chaos"
+            description="Keeping members informed and aligned across multiple channels is messy and time-consuming."
+            cta="Consolidate the chaos"
+          >
+            <div className="relative -mx-6 sm:-mx-8 -mb-6 sm:-mb-8 h-[280px] sm:h-[320px] mt-auto">
+              <NotificationAnimation />
+            </div>
+          </ProblemCard>
+        </MobileCarousel>
       </div>
     </section>
   );

@@ -1,69 +1,47 @@
 import Image from "next/image";
+import { CountUp } from "../motion";
+import { CONTAINER } from "../primitives";
 
-const TrustedClubsSection = () => {
+const CLUBS = [
+  { name: "Drifters Club", logo: "/promo-logos/drifters-logo.svg" },
+  { name: "Happy Mile", logo: "/promo-logos/happy-mile-logo.svg" },
+  { name: "Plunge Club", logo: "/promo-logos/plunge-club-logo.svg" },
+];
 
-  // Club logos from promo-logos directory
-  const clubs = [
-    { name: 'Drifters Club', logo: '/promo-logos/drifters-logo.svg' },
-    { name: 'Happy Mile', logo: '/promo-logos/happy-mile-logo.svg' },
-    { name: 'Plunge Club', logo: '/promo-logos/plunge-club-logo.svg' },
-  ];
+// Repeat enough times that one half of the track is wider than any viewport.
+const TRACK = Array.from({ length: 4 }, () => CLUBS).flat();
 
+export default function TrustedClubsSection() {
   return (
-    <section className="pt-8 pb-16 bg-white">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
-            Trusted by Leading Clubs
-          </h3>
+    <section className="bg-white pb-16 sm:pb-24">
+      <div className={CONTAINER}>
+        <div className="flex items-center gap-4 sm:gap-6 mb-10">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-gray-200" />
+          <p className="text-sm text-gray-500 whitespace-nowrap">
+            Trusted by{" "}
+            <CountUp to={100} suffix="+" className="font-semibold text-gray-900 tabular-nums" />{" "}
+            clubs
+          </p>
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-gray-200" />
         </div>
+      </div>
 
-        {/* Infinite Carousel */}
-        <div className="relative overflow-hidden">
-          <div
-            className="flex items-center space-x-12 animate-scroll"
-          >
-            {/* First set of logos */}
-            {clubs.map((club, index) => (
-              <div
-                key={`first-${index}`}
-                className="flex items-center justify-center min-w-[200px]"
-              >
-                <Image
-                  src={club.logo}
-                  alt={`${club.name} logo`}
-                  width={200}
-                  height={48}
-                  className="h-12 w-auto object-contain filter brightness-0 opacity-60"
-                />
-              </div>
-            ))}
-
-            {/* Duplicate set for seamless loop */}
-            {clubs.map((club, index) => (
-              <div
-                key={`second-${index}`}
-                className="flex items-center justify-center min-w-[200px]"
-              >
-                <Image
-                  src={club.logo}
-                  alt={`${club.name} logo`}
-                  width={200}
-                  height={48}
-                  className="h-12 w-auto object-contain filter brightness-0 opacity-60"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Gradient overlays for smooth fade */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
+      <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+        <div className="flex w-max items-center cp-logo-marquee">
+          {[...TRACK, ...TRACK].map((club, i) => (
+            <div key={i} className="flex items-center justify-center px-10 sm:px-14">
+              <Image
+                src={club.logo}
+                alt={i < CLUBS.length ? `${club.name} logo` : ""}
+                aria-hidden={i >= CLUBS.length || undefined}
+                width={200}
+                height={48}
+                className="h-9 sm:h-11 w-auto object-contain brightness-0 opacity-50 transition-opacity duration-300 hover:opacity-90"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
-};
-
-export default TrustedClubsSection;
+}

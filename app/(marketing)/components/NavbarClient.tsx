@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-const APP_ORIGIN = "https://my.joinclubpack.com";
+import { APP_ORIGIN } from "@/lib/constants";
 
 function HamburgerIcon({ open }: { open: boolean }) {
   return open ? (
@@ -34,8 +34,8 @@ export function NavLinks() {
 
   const navLinkClass = (href: string) => {
     const active = pathname === href;
-    return `text-sm px-3 py-2 rounded-md transition-colors focus:outline-none ${
-      active ? "text-gray-300" : "text-gray-400 hover:text-gray-300"
+    return `text-sm px-4 py-2 rounded-full transition-colors focus:outline-none ${
+      active ? "text-white bg-white/10" : "text-gray-400 hover:text-white hover:bg-white/5"
     }`;
   };
 
@@ -50,52 +50,98 @@ export function NavLinks() {
       <Link href="/pricing" className={navLinkClass("/pricing")}>
         Pricing
       </Link>
+      <Link href="/sponsors" className={navLinkClass("/sponsors")}>
+        Sponsors
+      </Link>
     </div>
   );
 }
 
 export function MobileMenu() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openedAt, setOpenedAt] = useState(pathname);
+
+  // Close the menu whenever the route changes (e.g. back/forward navigation).
+  if (mobileOpen && openedAt !== pathname) {
+    setMobileOpen(false);
+  }
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    // Close if the viewport grows past the md breakpoint while open.
+    const mql = window.matchMedia("(min-width: 768px)");
+    const onBreakpoint = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileOpen(false);
+    };
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+    mql.addEventListener("change", onBreakpoint);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      mql.removeEventListener("change", onBreakpoint);
+    };
+  }, [mobileOpen]);
 
   return (
     <>
       <button
         type="button"
         className="md:hidden p-2 text-white hover:bg-gray-800 rounded-lg transition-colors focus:outline-none"
-        onClick={() => setMobileOpen((v) => !v)}
+        onClick={() => {
+          setOpenedAt(pathname);
+          setMobileOpen((v) => !v);
+        }}
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
         aria-expanded={mobileOpen}
+        aria-controls="marketing-mobile-menu"
       >
         <HamburgerIcon open={mobileOpen} />
       </button>
 
       {mobileOpen && (
-        <div className="absolute top-full left-0 right-0 md:hidden bg-gray-950/95 backdrop-blur-xl border-t border-gray-800">
+        <>
+        <div
+          className="absolute top-full left-0 right-0 h-dvh bg-black/40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+        <div
+          id="marketing-mobile-menu"
+          className="absolute top-full left-0 right-0 md:hidden bg-gray-950/95 backdrop-blur-xl border-t border-gray-800 max-h-[calc(100dvh-4rem)] overflow-y-auto"
+        >
           <div className="max-w-[1440px] mx-auto pt-2 pb-4 px-6 space-y-1">
             <Link
               href="/features"
-              className="block px-3 py-2.5 text-sm font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+              className="block px-3 py-3 text-base font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               Features
             </Link>
             <Link
               href="/pricing"
-              className="block px-3 py-2.5 text-sm font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+              className="block px-3 py-3 text-base font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               Pricing
             </Link>
             <Link
               href="/sponsors"
-              className="block px-3 py-2.5 text-sm font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+              className="block px-3 py-3 text-base font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               For Sponsors
             </Link>
             <Link
               href="/blog"
-              className="block px-3 py-2.5 text-sm font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+              className="block px-3 py-3 text-base font-medium text-white hover:text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               Blog
@@ -117,7 +163,7 @@ export function MobileMenu() {
               </Button>
               <Button
                 asChild
-                className="w-full bg-[#0054f9] hover:bg-[#0040d6] text-white px-4 py-2 rounded-md text-sm"
+                className="w-full bg-[#0054f9] hover:bg-[#0040d6] text-white px-4 py-2 rounded-full text-sm"
               >
                 <a
                   href={`${APP_ORIGIN}/signup`}
@@ -131,6 +177,7 @@ export function MobileMenu() {
             </div>
           </div>
         </div>
+        </>
       )}
     </>
   );
