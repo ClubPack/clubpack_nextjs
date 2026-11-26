@@ -5,6 +5,7 @@
   .cp-marquee-right,
   .cp-vertical-marquee-up,
   .cp-vertical-marquee-down,
+  .cp-float,
   .animate-scroll {
     animation: none !important;
     transform: none !important;
@@ -82,3 +83,46 @@
   }
 }
 
+
+/* Gentle bob for hero stickers. */
+.cp-float {
+  animation: cp-float 5s ease-in-out infinite;
+}
+
+@keyframes cp-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Logo marquee: slower, pausable on hover. */
+.cp-logo-marquee {
+  animation: cp-scroll 40s linear infinite;
+}
+
+.cp-logo-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-logo-marquee {
+    animation: none !important;
+  }
+}
+
+/* Pulsing status dot. */
+.cp-ping {
+  animation: cp-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes cp-ping {
+  75%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}

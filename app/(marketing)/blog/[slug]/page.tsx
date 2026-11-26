@@ -58,7 +58,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-16 w-full relative z-10">
           <Link
             href="/blog"
             className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors mb-8"
@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
         <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-16 w-full relative z-10">
           <article className="max-w-3xl mx-auto">
             <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-12 bg-white shadow-xl border border-gray-100">
               <Image

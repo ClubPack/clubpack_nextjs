@@ -1,6 +1,12 @@
-import Link from "next/link";
+import { Check } from "lucide-react";
+import { Reveal, Sticker } from "../components/motion";
+import {
+  CONTAINER,
+  PageHero,
+  PillButton,
+  SectionHeading,
+} from "../components/primitives";
 
-export const revalidate = 3600
 
 export const metadata = {
   title: "For Sponsors",
@@ -83,234 +89,143 @@ export default function SponsorsPage() {
 
   return (
     <>
-      <section className="relative pt-32 pb-24 bg-white overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
+      <PageHero
+        eyebrow="For sponsors"
+        title="Partner with social clubs nationwide"
+        description="Discover, connect, and collaborate with clubs through ClubPack. Join as a verified sponsor and start partnering faster."
+        stickers={
+          <>
+            <Sticker className="-left-8 top-6" rotate={-8}>
+              500+ active clubs
+            </Sticker>
+            <Sticker className="-right-6 top-28" tone="black" rotate={7} delay={0.55}>
+              Verified partners ✓
+            </Sticker>
+          </>
+        }
+      >
+        <PillButton href="/contact" size="lg">
+          Contact us
+        </PillButton>
+        <PillButton href="/contact" variant="light" size="lg" arrow={false}>
+          Schedule demo
+        </PillButton>
+      </PageHero>
 
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-[#0054f9] px-4 py-2 rounded-full text-sm font-bold mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-            <span>For Sponsors</span>
-          </div>
+      <section className="py-20 sm:py-32 bg-gray-50">
+        <div className={CONTAINER}>
+          <SectionHeading
+            eyebrow="Why ClubPack"
+            title="Sponsorships without the spreadsheets"
+            description="Streamline your sponsorship process with tools designed for brand-club partnerships."
+          />
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 mb-6 tracking-tight leading-[1.1]">
-            Partner with Social Clubs Nationwide
-          </h1>
-
-          <p className="text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
-            Discover, connect, and collaborate with clubs through ClubPack. Join
-            as a verified sponsor and start partnering faster.
-          </p>
-
-          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600 mb-10">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span className="font-semibold">500+ Active Clubs</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span className="font-semibold">Faster Deals</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span className="font-semibold">Verified Partners</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
-              href="/contact"
-              className="bg-[#0054f9] hover:bg-[#0040d6] text-white px-8 py-4 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 inline-flex items-center gap-2"
-            >
-              <span>Contact Us</span>
-              <span aria-hidden="true">→</span>
-            </Link>
-            <Link
-              href="/contact"
-              className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 px-8 py-4 rounded-xl font-semibold transition-all duration-200"
-            >
-              Schedule Demo
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            {benefits.map((benefit, i) => (
+              <Reveal key={benefit.title} delay={i * 0.08}>
+                <div className="h-full rounded-[28px] bg-white p-7 sm:p-9 ring-1 ring-gray-900/5 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-24px_rgba(15,23,42,0.22)]">
+                  <span className="font-mono text-xs text-gray-400">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-10 text-2xl font-semibold tracking-tight text-gray-900">
+                    {benefit.title}
+                  </h3>
+                  <p className="mt-3 text-gray-600 leading-relaxed">
+                    {benefit.description}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
+      <section className="py-20 sm:py-32 bg-white">
+        <div className={CONTAINER}>
+          <SectionHeading
+            eyebrow="Powerful features"
+            title="Everything you need to succeed"
+            description="Discover, connect, and partner with student clubs effectively."
+          />
 
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 mb-4 tracking-tight leading-[1.1]">
-              Why Choose ClubPack?
-            </h2>
-            <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
-              Streamline your sponsorship process with tools designed for
-              brand-club partnerships.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+            {features.map((feature, i) => (
+              <Reveal key={feature.title} delay={(i % 2) * 0.08}>
+                <div
+                  className={`h-full rounded-[28px] p-7 sm:p-9 ${
+                    i === 0
+                      ? "bg-[#0054f9] text-white"
+                      : i === 3
+                        ? "bg-gray-950 text-white"
+                        : "bg-gray-50 text-gray-900 ring-1 ring-gray-900/5"
+                  }`}
+                >
+                  <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-3 leading-relaxed opacity-70">
+                    {feature.description}
+                  </p>
+                  <ul className="mt-8 space-y-3">
+                    {feature.details.map((detail) => (
+                      <li key={detail} className="flex items-center gap-3">
+                        <Check className="size-4 shrink-0 opacity-70" strokeWidth={3} aria-hidden />
+                        <span className="opacity-90">{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 sm:py-32 bg-gray-50">
+        <div className={CONTAINER}>
+          <SectionHeading eyebrow="Testimonials" title="What our sponsors say" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            {testimonials.map((t, i) => (
+              <Reveal key={t.author} delay={i * 0.08}>
+                <figure className="flex h-full flex-col rounded-[28px] bg-white p-7 sm:p-10 ring-1 ring-gray-900/5">
+                  <blockquote className="text-xl sm:text-2xl font-medium tracking-tight leading-snug text-gray-900">
+                    &ldquo;{t.quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-8 flex items-center gap-3">
+                    <span className="grid size-10 place-items-center rounded-full bg-[#0054f9] font-semibold text-white">
+                      {t.author.charAt(0)}
+                    </span>
+                    <span>
+                      <span className="block font-semibold text-gray-900">{t.author}</span>
+                      <span className="block text-sm text-gray-500">
+                        {t.role}, {t.company}
+                      </span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {benefits.map((benefit) => (
-              <div
-                key={benefit.title}
-                className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300 text-center h-full"
-              >
-                <div className="w-16 h-16 bg-[#0054f9] rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-[0_8px_16px_-4px_rgba(0,84,249,0.3)] text-white text-2xl font-black">
-                  •
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {benefit.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {benefit.description}
+          <Reveal className="mt-5">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 rounded-[28px] bg-gray-950 p-8 sm:p-12">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-semibold tracking-[-0.03em] text-white">
+                  Ready to partner with clubs?
+                </h2>
+                <p className="mt-3 text-white/60">
+                  No setup fees • Cancel anytime • 30-day money-back guarantee
                 </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-[#0054f9] px-4 py-2 rounded-full text-sm font-bold mb-6">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span>Powerful features</span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 mb-4 tracking-tight leading-[1.1]">
-              Everything You Need to Succeed
-            </h2>
-            <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
-              Discover, connect, and partner with student clubs effectively.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300 h-full"
-              >
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="w-12 h-12 bg-[#0054f9] rounded-2xl flex items-center justify-center shadow-[0_8px_16px_-4px_rgba(0,84,249,0.3)] flex-shrink-0 text-white font-black">
-                    ✓
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  {feature.details.map((detail) => (
-                    <div
-                      key={detail}
-                      className="flex items-center gap-3 text-sm text-gray-600"
-                    >
-                      <div className="w-2 h-2 rounded-full bg-[#0054f9]" />
-                      <span>{detail}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-gray-100">
-                  <Link
-                    href="/contact"
-                    className="text-[#0054f9] font-semibold hover:text-[#0040d6] transition-colors inline-flex items-center gap-2"
-                  >
-                    <span>Learn More</span>
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                <PillButton href="/contact">Contact us</PillButton>
+                <PillButton href="/contact" variant="ghost" arrow={false}>
+                  Contact sales
+                </PillButton>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 mb-4 tracking-tight leading-[1.1]">
-              What Our Sponsors Say
-            </h2>
-            <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
-              Hear from brands that have partnered with clubs through ClubPack.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {testimonials.map((t) => (
-              <div
-                key={t.author}
-                className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300 h-full"
-              >
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-[#0054f9] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-[0_8px_16px_-4px_rgba(0,84,249,0.3)]">
-                    {t.author.charAt(0)}
-                  </div>
-                  <div className="ml-4">
-                    <div className="font-bold text-gray-900">{t.author}</div>
-                    <div className="text-sm text-gray-500 font-medium">
-                      {t.role}, {t.company}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-700 leading-relaxed italic">
-                  &quot;{t.quote}&quot;
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-4xl mx-auto px-8 sm:px-12 lg:px-16 w-full text-center relative z-10">
-          <div className="bg-white rounded-2xl p-12 shadow-xl border border-gray-100">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 mb-6 tracking-tight leading-[1.1]">
-              Ready to Partner with Student Clubs?
-            </h2>
-            <p className="text-2xl text-gray-600 mb-10 leading-relaxed">
-              Join brands already partnering with clubs through ClubPack.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
-              <Link
-                href="/contact"
-                className="bg-[#0054f9] hover:bg-[#0040d6] text-white px-8 py-4 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 inline-flex items-center gap-2"
-              >
-                <span>Contact Us</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-              <Link
-                href="/contact"
-                className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 px-8 py-4 rounded-xl font-semibold transition-all duration-200"
-              >
-                Contact Sales
-              </Link>
             </div>
-
-            <p className="text-gray-500 text-sm font-medium">
-              No setup fees • Cancel anytime • 30-day money-back guarantee
-            </p>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

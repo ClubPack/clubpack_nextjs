@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import "./marketing.css";
-import AnnouncementBanner from "./components/AnnouncementBanner";
+import FloatingDock from "./components/FloatingDock";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 
@@ -37,11 +37,11 @@ export const metadata: Metadata = {
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <AnnouncementBanner />
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
+      <FloatingDock />
     </div>
   );
 }

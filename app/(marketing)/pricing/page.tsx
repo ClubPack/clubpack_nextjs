@@ -1,20 +1,14 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-
-export const revalidate = 3600
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import FaqList from "../components/FaqList";
+import { Reveal, Sticker } from "../components/motion";
+import { CONTAINER, PageHero, PillButton } from "../components/primitives";
 
 export const metadata = {
   title: "Pricing",
 };
 
-const APP_ORIGIN = "https://my.joinclubpack.com";
+import { APP_ORIGIN } from "@/lib/constants";
 
 export default function PricingPage() {
   const plans = [
@@ -66,7 +60,7 @@ export default function PricingPage() {
       ],
       description: "For established clubs with advanced needs",
       cta: "Talk to Sales",
-      href: "/contact",
+      href: "mailto:hello@clubpack.com?subject=ClubPack%20Premium",
       popular: false,
     },
   ] as const;
@@ -100,176 +94,122 @@ export default function PricingPage() {
 
   return (
     <>
-      <section className="relative pt-32 pb-24 bg-white overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full text-center relative z-10">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 mb-6 tracking-tight leading-[1.1]">
-            Simple, Transparent Pricing
-          </h1>
-
-          <p className="text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
-            Start free, scale as you grow. No hidden fees, no long-term
-            contracts.
-          </p>
-
-          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span className="font-semibold">No Hidden Fees</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span className="font-semibold">30-Day Money Back</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0054f9]" />
-              <span className="font-semibold">Cancel Anytime</span>
-            </div>
-          </div>
+      <PageHero
+        eyebrow="Pricing"
+        title="Simple, transparent pricing"
+        description="Start free, scale as you grow. No hidden fees, no long-term contracts."
+        stickers={
+          <>
+            <Sticker className="-left-6 top-6" rotate={-8}>
+              $0 to start
+            </Sticker>
+            <Sticker className="-right-4 top-24" tone="sky" rotate={7} delay={0.55}>
+              Cancel anytime
+            </Sticker>
+          </>
+        }
+      >
+        <div className="flex flex-wrap justify-center gap-2">
+          {["No hidden fees", "30-day money back", "Cancel anytime"].map((item) => (
+            <span
+              key={item}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-gray-200"
+            >
+              <Check className="size-3.5 text-[#0054f9]" strokeWidth={3} aria-hidden />
+              {item}
+            </span>
+          ))}
         </div>
-      </section>
+      </PageHero>
 
-      <section className="py-24 bg-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
-          <div className="text-left mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-900 mb-4">
-              Choose Your Plan
-            </h2>
-            <p className="text-2xl text-gray-600 max-w-3xl">
-              Start free and upgrade as your club grows. All plans include
-              access to the core platform.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            {plans.map((plan) => (
-              <Card
-                key={plan.name}
-                className={`bg-white rounded-2xl p-8 shadow-xl border transition-shadow duration-300 h-full flex flex-col gap-0 ${
-                  plan.popular
-                    ? "border-blue-200 shadow-[0_24px_48px_-16px_rgba(0,84,249,0.25)]"
-                    : "border-gray-100 hover:shadow-2xl"
-                }`}
-              >
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="text-sm font-bold text-gray-500 tracking-widest">
-                      {plan.name}
-                    </div>
-                    {plan.popular && (
-                      <div className="mt-2 inline-flex items-center bg-blue-50 text-[#0054f9] px-3 py-1 rounded-full text-xs font-bold">
-                        Most Popular
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <span className="text-5xl font-bold text-gray-900">
-                    ${plan.price}
-                  </span>
-                  <span className="text-gray-500">/{plan.period}</span>
-                </div>
-
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  {plan.description}
-                </p>
-
-                <ul className="space-y-3 mb-10">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3">
-                      <span className="w-5 h-5 bg-[#0054f9] text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg
-                          viewBox="0 0 20 20"
-                          className="w-3.5 h-3.5"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M16 6l-7.5 8L4 10.5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
-                      <span className="text-gray-700 leading-relaxed">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-auto">
-                  {plan.href.startsWith("http") ? (
-                    <Button
-                      asChild
-                      className={`w-full h-auto px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                        plan.popular
-                          ? "bg-[#0054f9] hover:bg-[#0040d6] text-white shadow-sm hover:shadow-md"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                      }`}
-                    >
-                      <a
-                        href={plan.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {plan.cta}
-                      </a>
-                    </Button>
-                  ) : (
-                    <Button
-                      asChild
-                      className={`w-full h-auto px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                        plan.popular
-                          ? "bg-[#0054f9] hover:bg-[#0040d6] text-white shadow-sm hover:shadow-md"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                      }`}
-                    >
-                      <Link href={plan.href}>{plan.cta}</Link>
-                    </Button>
+      <section className="pb-20 sm:pb-32 bg-white">
+        <div className={CONTAINER}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 items-stretch">
+            {plans.map((plan, i) => (
+              <Reveal key={plan.name} delay={i * 0.08} className="flex">
+                <div
+                  className={cn(
+                    "relative flex w-full flex-col rounded-[28px] p-7 sm:p-9 transition-transform duration-500 hover:-translate-y-1",
+                    plan.popular
+                      ? "bg-gray-950 text-white shadow-[0_40px_80px_-30px_rgba(0,84,249,0.55)] lg:-my-4 lg:py-12"
+                      : "bg-gray-50 text-gray-900 ring-1 ring-gray-900/5",
                   )}
+                >
+                  {plan.popular && (
+                    <span className="absolute -top-3 right-7 rotate-6 rounded-full bg-gradient-to-br from-[#4d86ff] to-[#0054f9] px-3 py-1 text-xs font-semibold text-white shadow-lg">
+                      Most popular
+                    </span>
+                  )}
+
+                  <p
+                    className={cn(
+                      "font-mono text-xs uppercase tracking-[0.2em]",
+                      plan.popular ? "text-white/50" : "text-gray-500",
+                    )}
+                  >
+                    {plan.name}
+                  </p>
+
+                  <div className="mt-6 flex items-baseline gap-1">
+                    <span className="text-6xl font-semibold tracking-[-0.04em]">
+                      ${plan.price}
+                    </span>
+                    <span className={plan.popular ? "text-white/50" : "text-gray-500"}>
+                      /{plan.period}
+                    </span>
+                  </div>
+
+                  <p
+                    className={cn(
+                      "mt-4 leading-relaxed",
+                      plan.popular ? "text-white/60" : "text-gray-600",
+                    )}
+                  >
+                    {plan.description}
+                  </p>
+
+                  <ul
+                    className={cn(
+                      "mt-8 space-y-3 border-t pt-8 mb-10",
+                      plan.popular ? "border-white/10" : "border-gray-200",
+                    )}
+                  >
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-3">
+                        <span
+                          className={cn(
+                            "mt-0.5 grid size-5 shrink-0 place-items-center rounded-full",
+                            plan.popular ? "bg-white text-gray-950" : "bg-[#0054f9] text-white",
+                          )}
+                        >
+                          <Check className="size-3" strokeWidth={3} aria-hidden />
+                        </span>
+                        <span className={plan.popular ? "text-white/80" : "text-gray-700"}>
+                          {f}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <PillButton
+                    href={plan.href}
+                    variant={plan.popular ? "primary" : "dark"}
+                    className="mt-auto w-full"
+                  >
+                    {plan.cta}
+                  </PillButton>
                 </div>
-              </Card>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YxRjVGOSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50" />
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-4xl mx-auto px-8 sm:px-12 lg:px-16 w-full relative z-10">
-          <div className="mb-12">
-            <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-              Frequently Asked Questions
-            </h2>
-            <p className="mt-4 text-lg leading-relaxed text-gray-700 sm:text-xl">
-              Got questions? We&apos;ve got answers.
-            </p>
-          </div>
-
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem key={faq.q} value={`pricing-faq-${index}`}>
-                <AccordionTrigger className="text-left text-lg font-medium sm:text-xl">
-                  {faq.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-lg leading-relaxed text-gray-700 sm:text-xl">
-                  {faq.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
+      <FaqList
+        className="bg-gray-50"
+        faqs={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
+        description="Got questions? We've got answers."
+      />
     </>
   );
 }
